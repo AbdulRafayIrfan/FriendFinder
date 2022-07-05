@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+    <!-- Bootstrap Core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+          crossorigin="anonymous"
+    >
+
+    <!-- My own css file  -->
+    <link rel="stylesheet" href="/Styles/my-styles.css" type="text/css" />
+
+    <!-- Bootstrap icon css -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
+    <title><?php echo $view->pageTitle; ?></title>
+</head>
+
+<body>
+
+<header class="p-3 border-bottom">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <a href="../Controller/home.php" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
+                <img src="../Images/logo.png" id="website-logo">
+            </a>
+
+            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="../Controller/home.php" class="nav-link px-2 link-dark">Home</a></li>
+                <li><a href="../Controller/friend.php" class="nav-link px-2 link-dark">Friends</a></li>
+                <li><a href="../Controller/connect.php" class="nav-link px-2 link-dark">Connect</a></li>
+                <li><a href="../Controller/request.php" class="nav-link px-2 link-dark position-relative">Requests
+                        <?php if (isset($_SESSION['user_loggedIn']) && $view->requestsCount > 0) { ?>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <?php echo $view->requestsCount ?>
+                        </span>
+                        <?php } ?>
+                    </a></li>
+            </ul>
+
+            <?php if (isset($_SESSION['user_loggedIn'])) {
+                    foreach ($view->usersDataSet as $userData) {
+                        if ($_SESSION['user_loggedIn'] == $userData->getUsername()) { ?>
+            <div class="dropdown text-end">
+                <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="<?php echo $userData->getPhoto(); ?>" alt="mdo" width="32" height="32" class="rounded-circle">
+                </a>
+                <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
+                    <li><a class="dropdown-item" href="../Controller/profile.php">Profile</a></li>
+                    <li><a class="dropdown-item" href="../Controller/logout.php">Sign out</a></li>
+                </ul>
+            </div>
+            <?php }}} ?>
+        </div>
+    </div>
+</header>

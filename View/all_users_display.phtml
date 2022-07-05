@@ -1,0 +1,101 @@
+<?php require_once('Template/header.phtml') ?>
+
+<link rel="stylesheet" href="../Styles/search-page.css">
+<script defer src="../Scripts/live-search.js"></script>
+<div id="profile-div" class="container justify-content-center align-items-center">
+    <div class="wrapper bg-white mt-sm-5">
+
+        <?php if (isset($_SESSION['error'])) { ?>
+        <div class="alert alert-danger" role="alert">
+            <?php echo $_SESSION['error']; ?>
+        </div>
+        <?php } ?>
+
+        <h4 class="text-center">Search for users</h4>
+        <form class="search-user-form" action="../Controller/connect.php" method="POST">
+            <div class="input-group mb-4" id="search-input-group">
+                    <div class="form-outline" id="search-input">
+                        <input onkeyup="liveSearch(this.value)" type="search" name="search-term" class="form-control" id="search-form-input" placeholder="Search here..." value="<?php if (isset($_POST['search-term'])) echo $_POST['search-term']; ?>" required/>
+                    </div><button type="submit" name="search-button" class="btn btn-primary" id="search-btn">
+                        <i class="bi bi-search"></i>
+                    </button>
+            </div>
+            <?php if (isset($_POST['search-term'])) echo '<a id="view-all" href="../Controller/connect.php">View all users</a>' ?>
+        </form>
+
+        <h4 class="pb-4 border-bottom text-center"><?php if (isset($_POST['search-term'])) echo "Search Results"; else echo "Currently Registered Users"; ?></h4>
+
+        <div class="row">
+        <?php if (isset($view->pagedData)) { ?>
+            <?php if (isset($view->pagedData)) {
+                foreach ($view->pagedData as $userData) { ?>
+                <div class="col-xxl-6 col-sm-12 mb-4">
+                    <div class="card text-center" onclick="location.href='../Controller/user_profile.php?usr=<?php echo $userData->getUserID() ?>';">
+                     <img src="<?php echo htmlentities($userData->getPhoto()); ?>" class="card-img-top rounded" alt="profile-img">
+                         <div class="card-body">
+                             <h5 class="card-title"><?php echo htmlentities($userData->getUsername()); ?></h5>
+                             <?php if (isset($_SESSION['user_loggedIn'])) { ?>
+                             <h6 class="card-subtitle mb-2 text-muted"><?php echo htmlentities($userData->getFullName()); ?></h6>
+                             <?php } ?>
+                         </div>
+                    </div>
+                </div>
+            <?php }}} elseif (isset($view->resultsData)) {
+                    foreach ($view->resultsData as $userData) {?>
+                <div class="col-xxl-6 col-sm-12 mb-4">
+                    <div class="card text-center" onclick="location.href='../Controller/user_profile.php?usr=<?php echo $userData->getUserID() ?>';">
+                    <img src="<?php echo htmlentities($userData->getPhoto()); ?>" class="card-img-top rounded" alt="profile-img">
+                        <div class="card-body">
+                            <h5 class="card-title"><?php echo htmlentities($userData->getUsername()); ?></h5>
+                            <h6 class="card-subtitle mb-2 text-muted"><?php echo htmlentities($userData->getFullName()); ?></h6>
+                            <p class="card-text">Location: ( <?php echo htmlentities($userData->getLatitude()).' , '.htmlentities($userData->getLongitude()) ?>)</p>
+                        </div>
+                    </div>
+                </div>
+                <?php }} ?>
+
+            <!-- Appropriate display if none returned -->
+            <?php if (isset($_POST['search-term'])) {
+                if (is_null($view->resultsData)) { echo '<p class="text-center">No results found for "'.htmlentities($_POST['search-term']).'"</p>';}
+            } elseif (is_null($view->pagedData)) echo '<p class="text-center">No registered users</p>'; ?>
+
+        </div>
+
+        <!-- Pagination Links -->
+        <?php if (isset($view->pagedData)) { ?>
+            <div class="pages-nav">
+                <ul class="pagination justify-content-center">
+                    <?php if ($view->currentPage < 2) { ?>
+                    <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                    <?php } else { ?>
+                    <li class="page-item"><a class="page-link" href="../Controller/connect.php?page=<?php echo ($view->currentPage - 1); ?>">Previous</a></li>
+                    <?php } ?>
+                    <?php if ($view->currentPage != 1) { ?>
+                    <li class="page-item"><a href="../Controller/connect.php?page=1" class="page-link">1</a></li>
+                    <li class="page-item disabled"><span class="page-link">..</span></li>
+                    <?php } ?>
+                    <?php for ($i = $view->currentPage; $i<=($view->currentPage+5); $i++) {
+                        if ($i <= $view->totalPages) {
+                            echo '<li class="page-item"><a class="page-link" href="../Controller/connect.php?page=' . $i . '">' . $i . '</a></li>';
+                        }
+                    }?>
+                    <?php if (($view->totalPages - $view->currentPage) > 5) { ?>
+                    <li class="page-item disabled"><span class="page-link">..</span></li>
+                    <li class="page-item"><a href="../Controller/connect.php?page=<?php echo $view->totalPages ?>" class="page-link"><?php echo $view->totalPages ?></a></li>
+                    <?php } ?>
+                    <?php if (($view->currentPage) != ($view->totalPages)) { ?>
+                    <li class="page-item"><a class="page-link" href="../Controller/connect.php?page=<?php echo ($view->currentPage + 1) ?>">Next</a></li>
+                    <?php } else { ?>
+                    <li class="page-item disabled"><span class="page-link">Next</span></li>
+                    <?php } ?>
+                </ul>
+            </div>
+            <?php echo '<p class="text-center">Showing page <strong>'.$view->currentPage.'</strong> out of <strong>'.$view->totalPages.'</strong></p>'?>
+        <?php } ?>
+
+    </div>
+</div>
+
+<?php if (isset($_SESSION['error'])) unset($_SESSION['error']) ?>
+
+<?php require('Template/footer.phtml') ?>

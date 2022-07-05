@@ -1,0 +1,39 @@
+<?php require_once('Template/header.phtml') ?>
+
+<link rel="stylesheet" href="../Styles/search-page.css">
+<div id="profile-div" class="container justify-content-center align-items-center">
+    <div class="wrapper bg-white mt-sm-5">
+
+        <?php if (isset($_SESSION['error'])) { ?>
+            <div class="alert alert-danger" role="alert">
+                <?php echo $_SESSION['error']; ?>
+            </div>
+        <?php } ?>
+
+        <h4 class="text-center">Your friend requests</h4>
+
+        <?php if (isset($_SESSION['user_loggedIn'])) { ?>
+        <div class="row">
+         <?php if (isset($view->allRequestDetails)) {
+             foreach ($view->allRequestDetails as $userData) { ?>
+
+            <div class="col-xxl-6 col-sm-12 mb-4">
+                <div class="card text-center" onclick="location.href='../Controller/user_profile.php?usr=<?php echo $userData->getUserID() ?>';">
+                    <img src="<?php echo htmlentities($userData->getPhoto()); ?>" class="card-img-top rounded" alt="profile-img">
+                    <div class="card-body">
+                        <h5 class="card-title"><?php echo htmlentities($userData->getUsername()); ?></h5>
+                        <h6 class="card-subtitle mb-2 text-muted"><?php echo htmlentities($userData->getFullName()); ?></h6>
+                        <a href="../Controller/request_functions.php?request=accept&id=<?php echo $userData->getUserID() ?>" class="btn btn-primary btn-sm">Accept Request</a>
+                        <a href="../Controller/request_functions.php?request=ignore&id=<?php echo $userData->getUserID() ?>" class="btn btn-danger btn-sm">Ignore</a>
+                    </div>
+                </div>
+            </div>
+            <?php }} else echo '<h6 class="text-center">You currently have no requests pending</h6>'?>
+        </div>
+
+        <?php } else echo '<h3 class="text-center">You are not logged in!</h3>' ?>
+    </div>
+</div>
+
+<?php if (isset($_SESSION['error'])) unset($_SESSION['error']) ?>
+<?php require('Template/footer.phtml') ?>

@@ -1,0 +1,49 @@
+<?php require('Template/header.phtml'); ?>
+
+
+<link rel="stylesheet" href="../Styles/profile-settings.css">
+<div id="profile-div" class="container justify-content-center align-items-center">
+    <div class="wrapper bg-white mt-sm-5">
+        <h4 class="pb-4 border-bottom text-center">User Profile</h4>
+
+        <?php foreach ($view->usersDataSet as $userData) {
+            if ($_GET["usr"] == $userData->getUserID()) { ?>
+        <div class="d-flex align-items-start justify-content-center py-2"> <img src="<?php echo $userData->getPhoto(); ?>" class="img border" alt="profile-img">
+            <div class="pl-sm-4 pl-2" id="img-section"></div>
+        </div>
+        <?php if (isset($_SESSION['user_loggedIn'])) { ?>
+        <div class="friend-buttons d-flex justify-content-center py-3 border-bottom">
+            <?php if (isset($view->isRequestSender) && $view->isRequestSender == true) { ?>
+            <p>You have already sent a friend request to this user.</p>
+            <?php } elseif (isset($view->isRequestSender) && $view->isRequestSender == false) { ?>
+            <p>You have received a friend request from this user. Check your <a href="../Controller/request.php">requests page</a></p>
+            <?php }elseif (isset($view->isFriend)) { ?>
+            <a href="../Controller/request_functions.php?request=unfriend&id=<?php echo $userData->getUserID() ?>" class="btn btn-danger btn-sm">Unfriend</a>
+            <?php }else { ?>
+            <a href="../Controller/request_functions.php?request=send&id=<?php echo $userData->getUserID() ?>" class="btn btn-primary btn-sm">Send Friend Request</a>
+            <?php } ?>
+
+        </div>
+        <?php } ?>
+
+        <div class="py-2">
+            <div class="row py-2">
+                <div class="col-md-12"> <label for="fullname">Full Name</label> <input type="text" class="bg-light form-control" placeholder="<?php if (isset($_SESSION['user_loggedIn'])) echo htmlentities($userData->getFullName()); ?>" disabled> </div>
+            </div>
+            <div class="row py-2">
+                <div class="col-md-6"> <label for="email">Email</label> <input type="text" class="bg-light form-control" placeholder="" disabled> </div>
+                <div class="col-md-6 pt-md-0 pt-3"> <label for="username">Username</label> <input type="tel" class="bg-light form-control" placeholder="<?php echo $userData->getUsername(); ?>" disabled> </div>
+            </div>
+            <div class="row py-2">
+                <!-- Show location only if user is a friend -->
+                <?php if (isset($view->isFriend)) { ?>
+                <div class="col-md-6"> <label for="longitude">Longitude</label> <input type="text" class="bg-light form-control" placeholder="<?php if (isset($_SESSION['user_loggedIn'])) echo htmlentities($userData->getLongitude()); ?>" disabled></div>
+                <div class="col-md-6 pt-md-0 pt-3" id="latitude"> <label for="latitude">Latitude</label><input type="text" class="bg-light form-control" placeholder="<?php if (isset($_SESSION['user_loggedIn'])) echo htmlentities($userData->getLatitude()); ?>" disabled></div>
+            </div>
+            <?php } ?>
+        </div>
+        <?php }} ?>
+    </div>
+</div>
+
+<?php require('Template/footer.phtml') ?>

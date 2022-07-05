@@ -1,0 +1,12 @@
+<?php require('Template/header.phtml'); ?>
+
+<!-- Background image and text for home page -->
+<div id="home">
+    <div class="landing-text">
+        <h1>READY TO CONNECT <?php if (isset($_SESSION['user_loggedIn'])) { echo htmlentities($_SESSION['user_loggedIn']);}?>?</h1>
+        <h3>Find and connect with new people.</h3>
+        <a href="../Controller/connect.php" class="btn btn-outline-light btn-lg">GET STARTED</a>
+    </div>
+</div>
+
+<?php require('Template/footer.phtml') ?>
